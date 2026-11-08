@@ -1,0 +1,5 @@
+set,y,BM,PB,CALGB,CCG,DFCI,St-Jude
+test,ALL,14,6,0,0,17,3
+test,AML,10,4,4,5,0,5
+train,ALL,27,0,0,0,27,0
+train,AML,11,0,11,0,0,0

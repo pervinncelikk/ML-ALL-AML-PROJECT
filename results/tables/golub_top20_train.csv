@@ -1,0 +1,21 @@
+,description,log2FC_AML_vs_ALL,welch_t,fdr_welch,golub_SNR
+X95735_at,Zyxin,3.1105,9.641,0.0,1.5967
+M55150_at,FAH Fumarylacetoacetate,1.3063,7.8532,0.0,1.2769
+Y12670_at,LEPR Leptin receptor,1.7531,7.6967,0.0,1.2956
+U50136_rna1_at,Leukotriene C4 synthase (LTC4S) gene,1.4027,8.4809,0.0,1.4959
+M31523_at,TCF3 Transcription factor 3 (E2A immunoglobulin enhancer binding factors E12/E47),-1.95,-7.4736,0.0,-1.2531
+U82759_at,GB DEF = Homeodomain protein HoxA9 mRNA,1.8982,6.9983,0.0,1.1604
+M27891_at,CST3 Cystatin C (amyloid angiopathy and cerebral hemorrhage),4.7408,9.2163,0.0,1.7289
+X04085_rna1_at,Catalase (EC 1.11.1.6) 5'flank and exon 1 mapping to chromosome 11; band p13 (and joined CDS),2.0699,6.5282,0.0001,1.062
+U22376_cds2_s_at,C-myb gene extracted from Human (c-myb) gene; complete primary cds; and five complete alternatively spliced cds,-2.4328,-7.7807,0.0001,-1.3719
+X74262_at,RETINOBLASTOMA BINDING PROTEIN P48,-2.2637,-7.1028,0.0001,-1.2064
+Z15115_at,TOP2B Topoisomerase (DNA) II beta (180kD),-1.4673,-6.5246,0.0001,-1.0753
+L09209_s_at,APLP2 Amyloid beta (A4) precursor-like protein 2,2.5278,6.8677,0.0001,1.1594
+S50223_at,HKR-T1,-1.3631,-6.2068,0.0001,-1.0069
+U05259_rna1_at,MB-1 gene,-3.0111,-6.3278,0.0001,-1.0353
+M16038_at,LYN V-yes-1 Yamaguchi sarcoma viral related oncogene homolog,2.3085,7.1579,0.0001,1.2438
+U62136_at,Putative enterocyte differentiation promoting factor mRNA; partial cds,-1.1908,-6.1983,0.0001,-1.0102
+X17042_at,PRG1 Proteoglycan 1; secretory granule,2.6633,6.3402,0.0001,1.0452
+M91432_at,ACADM Acyl-Coenzyme A dehydrogenase; C-4 to C-12 straight chain,-1.91,-6.3611,0.0001,-1.0509
+U29175_at,Transcriptional activator hSNF2b,-1.4285,-6.088,0.0001,-0.9905
+L47738_at,Inducible protein mRNA,-2.3898,-6.7585,0.0001,-1.1655

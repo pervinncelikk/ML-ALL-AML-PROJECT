@@ -1,0 +1,5 @@
+set,class,raw_median,raw_mean,log_median,log_iqr,P_call_%
+test,ALL,113.95,590.14,8.45,2.38,28.55
+test,AML,123.21,613.48,8.53,2.41,25.59
+train,ALL,130.85,631.85,8.66,2.35,29.68
+train,AML,130.91,652.04,8.74,2.43,27.43

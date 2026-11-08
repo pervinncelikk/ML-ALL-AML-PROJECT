@@ -1,0 +1,269 @@
+{
+ "n_samples": 72,
+ "n_probes": 7129,
+ "n_affx_control": 58,
+ "label_check": {
+  "train_sorted": false,
+  "test_sorted": false,
+  "n_mislabeled_if_positional": 14
+ },
+ "train_col_order_head": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  34,
+  35,
+  36
+ ],
+ "test_col_order_head": [
+  39,
+  40,
+  42,
+  47,
+  48,
+  49,
+  41,
+  43,
+  44,
+  45,
+  46,
+  70
+ ],
+ "class_counts": {
+  "ALL": {
+   "test": 20,
+   "train": 27
+  },
+  "AML": {
+   "test": 14,
+   "train": 11
+  }
+ },
+ "meta_crosstab": {
+  "test|ALL": {
+   "BM": 14,
+   "PB": 6,
+   "CALGB": 0,
+   "CCG": 0,
+   "DFCI": 17,
+   "St-Jude": 3
+  },
+  "test|AML": {
+   "BM": 10,
+   "PB": 4,
+   "CALGB": 4,
+   "CCG": 5,
+   "DFCI": 0,
+   "St-Jude": 5
+  },
+  "train|ALL": {
+   "BM": 27,
+   "PB": 0,
+   "CALGB": 0,
+   "CCG": 0,
+   "DFCI": 27,
+   "St-Jude": 0
+  },
+  "train|AML": {
+   "BM": 11,
+   "PB": 0,
+   "CALGB": 11,
+   "CCG": 0,
+   "DFCI": 0,
+   "St-Jude": 0
+  }
+ },
+ "ALL_B_T": {
+  "allB": 38,
+  "aml": 25,
+  "allT": 9
+ },
+ "quality": [
+  {
+   "set": "train",
+   "n": 38,
+   "missing_NaN": 0,
+   "INF": 0,
+   "neg_or_zero_%": 28.76,
+   "min": -28400.0,
+   "max": 61228.0,
+   "median": 127.0,
+   "<100_%": 46.25,
+   "<20_%": 32.37,
+   ">16000_%": 0.857,
+   "P_%": 29.03,
+   "A_%": 69.36,
+   "M_%": 1.62
+  },
+  {
+   "set": "test",
+   "n": 34,
+   "missing_NaN": 0,
+   "INF": 0,
+   "neg_or_zero_%": 29.24,
+   "min": -26775.0,
+   "max": 71369.0,
+   "median": 114.0,
+   "<100_%": 47.89,
+   "<20_%": 33.11,
+   ">16000_%": 0.799,
+   "P_%": 27.33,
+   "A_%": 71.06,
+   "M_%": 1.61
+  }
+ ],
+ "log_raw_neg_inf": 1615,
+ "log_raw_nan": 147174,
+ "log_raw_bad_%": 28.99,
+ "probes_never_P": 1971,
+ "probes_P_in_all": 329,
+ "calls_P_per_sample_min_max": [
+  19.1,
+  40.5
+ ],
+ "neg_values_with_A_call_%": 99.28,
+ "robust_z_gt5_%": 0.795,
+ "iqr_outlier_%": 4.53,
+ "iqr_outlier_genes_any_%": 60.0,
+ "iqr_outlier_sample_max": {
+  "patient": 64,
+  "pct": 10.55
+ },
+ "sample_most_outlier": {
+  "patient": 64,
+  "pct": 1.56
+ },
+ "filter_genes_72": 3571,
+ "filter_genes_72_clip20": 3859,
+ "filter_genes_train": 3051,
+ "descriptives_by_group": {
+  "test|ALL": {
+   "raw_median": 113.95,
+   "raw_mean": 590.14,
+   "log_median": 8.45,
+   "log_iqr": 2.38,
+   "P_call_%": 28.55
+  },
+  "test|AML": {
+   "raw_median": 123.21,
+   "raw_mean": 613.48,
+   "log_median": 8.53,
+   "log_iqr": 2.41,
+   "P_call_%": 25.59
+  },
+  "train|ALL": {
+   "raw_median": 130.85,
+   "raw_mean": 631.85,
+   "log_median": 8.66,
+   "log_iqr": 2.35,
+   "P_call_%": 29.68
+  },
+  "train|AML": {
+   "raw_median": 130.91,
+   "raw_mean": 652.04,
+   "log_median": 8.74,
+   "log_iqr": 2.43,
+   "P_call_%": 27.43
+  }
+ },
+ "skew_raw_filtered_median": 1.16,
+ "skew_log_filtered_median": 0.05,
+ "pca_explained_%": [
+  16.06,
+  11.43,
+  5.95,
+  4.7,
+  3.84,
+  3.16,
+  2.63,
+  2.45,
+  2.13,
+  2.01
+ ],
+ "pca_cum10_%": 54.38,
+ "pca_n_for_80%": 34,
+ "pc1_vs_class_MWU_p": 0.29793984677585006,
+ "pc1_vs_set_MWU_p": 0.004556142821947797,
+ "pc2_vs_class_MWU_p": 5.665836769995472e-08,
+ "pc2_vs_set_MWU_p": 0.6971651904780264,
+ "pc1_vs_source_KW_p": 0.08005983829494634,
+ "pc1_vs_BMPB_MWU_p": 0.9545528750819254,
+ "pc1_median_by_source": {
+  "CALGB": 14.12,
+  "CCG": 6.4,
+  "DFCI": -0.39,
+  "St-Jude": -12.94
+ },
+ "silhouette_pc12_class": 0.14,
+ "silhouette_pc12_set": 0.049,
+ "de_n_fdr05_welch": 608,
+ "de_n_fdr01_welch": 270,
+ "de_n_fdr05_mwu": 540,
+ "de_n_fdr05_and_absLFC1": 313,
+ "de_up_in_AML_fdr05": 273,
+ "de_up_in_ALL_fdr05": 335,
+ "top10_probes": [
+  "X95735_at",
+  "M55150_at",
+  "Y12670_at",
+  "U50136_rna1_at",
+  "M31523_at",
+  "U82759_at",
+  "M27891_at",
+  "X04085_rna1_at",
+  "U22376_cds2_s_at",
+  "X74262_at"
+ ],
+ "top10_desc": [
+  "Zyxin",
+  "FAH Fumarylacetoacetate",
+  "LEPR Leptin receptor",
+  "Leukotriene C4 synthase (LTC4S) gene",
+  "TCF3 Transcription factor 3 (E2A immunoglobulin enhancer binding factors E12/E47)",
+  "GB DEF = Homeodomain protein HoxA9 mRNA",
+  "CST3 Cystatin C (amyloid angiopathy and cerebral hemorrhage)",
+  "Catalase (EC 1.11.1.6) 5'flank and exon 1 mapping to chromosome 11; band p13 (and joined CDS)",
+  "C-myb gene extracted from Human (c-myb) gene; complete primary cds; and five complete alternatively spliced cds",
+  "RETINOBLASTOMA BINDING PROTEIN P48"
+ ],
+ "lfc_corr_train_test_all_genes_pearson": 0.702,
+ "lfc_sign_agree_top50_%": 100.0,
+ "top50_p<0.05_in_test": 44,
+ "median_log_train_vs_test_MWU_p": 0.015055901696682307,
+ "iqr_log_train_vs_test_MWU_p": 0.4738298402332074,
+ "Pcall_train_vs_test_MWU_p": 0.07110870414589723,
+ "ks_ALL_fdr05_n": 32,
+ "ks_ALL_p05_%": 17.5,
+ "ks_AML_fdr05_n": 0,
+ "ks_AML_p05_%": 7.9,
+ "affx_p05_n": 19,
+ "heatmap_2cluster_misplaced": {
+  "12": "ALL/allB/BM/DFCI/train",
+  "25": "ALL/allB/BM/DFCI/train",
+  "67": "ALL/allT/PB/DFCI/test"
+ }
+}
