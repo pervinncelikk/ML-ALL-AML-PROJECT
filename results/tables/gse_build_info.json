@@ -1,0 +1,33 @@
+{
+ "n_total_samples": 2096,
+ "n_probes": 54675,
+ "platform": [
+  "GPL570"
+ ],
+ "processing": [
+  "Data pre-processing included a summarization and quantile normalization step to generate probe set level signal intensities for each microarray experiment and was performed as previously published by Liu WM et al. PQN and DQN: algorithms for expression microarrays. J.Theor.Biol. 2006;243:273-278."
+ ],
+ "class_counts_all": {
+  "CLL": 448,
+  "AML with normal karyotype + other abnormalities": 351,
+  "c-ALL/Pre-B-ALL without t(9;22)": 237,
+  "MDS": 206,
+  "T-ALL": 174,
+  "c-ALL/Pre-B-ALL with t(9;22)": 122,
+  "CML": 76,
+  "Non-leukemia and healthy bone marrow": 74,
+  "Pro-B-ALL with t(11q23)/MLL": 70,
+  "ALL with t(12;21)": 58,
+  "AML complex aberrant karyotype": 48,
+  "ALL with hyperdiploid karyotype": 40,
+  "AML with t(8;21)": 40,
+  "AML with t(11q23)/MLL": 38,
+  "AML with t(15;17)": 37,
+  "ALL with t(1;19)": 36,
+  "AML with inv(16)/t(16;16)": 28,
+  "mature B-ALL with t(8;14)": 13
+ },
+ "n_ALL": 750,
+ "n_AML": 542,
+ "series_title": "Microarray Innovations in LEukemia (MILE) study: Stage 1 data"
+}
