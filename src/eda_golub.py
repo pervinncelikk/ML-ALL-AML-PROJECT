@@ -37,6 +37,7 @@ meta = pd.read_csv(RAW / "golub" / "golub_sample_info.csv").set_index("Samples")
 assert (meta.cancer.str.startswith("all") == (cls == "ALL")).all(), "meta etiket uyuşmazlığı"
 NUM["n_samples"], NUM["n_probes"] = X.shape
 NUM["n_affx_control"] = int(genes.index.str.startswith("AFFX").sum())
+NUM["raw_below_clip_%"] = round(100 * float((X.values < CLIP_LOW).mean()), 1)  # kırpma alt sınırının altındaki değer oranı
 NUM["label_check"] = {k: info[k] for k in ("train_sorted", "test_sorted", "n_mislabeled_if_positional")}
 NUM["train_col_order_head"] = info["train_order"][:30]
 NUM["test_col_order_head"] = info["test_order"][:12]
@@ -254,6 +255,8 @@ for lang, L in T.items():
         for patch, i in zip(bp["boxes"], order):
             patch.set(facecolor=pal[cls[i]], edgecolor="white", lw=.3)
         ax_.set_xticks([]); ax_.set_xlabel(L["sample"]); ax_.set_ylabel(yl); ax_.set_title(ttl)
+        lo_, hi_ = ax_.get_ylim(); r_ = hi_ - lo_  # yazı ve açıklama için boşluk bırak
+        ax_.set_ylim(lo_ - (.22 * r_ if ax_ is axs[0] else 0), hi_ + .12 * r_)
         ntr = (s == "train").sum(); ax_.axvline(ntr + .5, color=GREY, ls="--", lw=.6)
         ax_.text(ntr / 2, ax_.get_ylim()[1], L["train_s"], ha="center", va="top", fontsize=6.5, color="#52514e")
         ax_.text(ntr + (72 - ntr) / 2, ax_.get_ylim()[1], L["test_s"], ha="center", va="top", fontsize=6.5, color="#52514e")
@@ -287,14 +290,15 @@ for lang, L in T.items():
     save(fig, "golub_pca", lang)
 
     # F3b PCA + UMAP (ana metin için birleşik)
-    fig, axs = plt.subplots(1, 3, figsize=(FULL_W, 1.95), gridspec_kw=dict(width_ratios=[.8, 1, 1]))
+    fig, axs = plt.subplots(1, 3, figsize=(FULL_W, 1.8), gridspec_kw=dict(width_ratios=[.8, 1, 1]))
     axs[0].bar(np.arange(1, 11), ev, color=C_ALL, width=.7)
     axs[0].plot(np.arange(1, 11), np.cumsum(ev), color="#0b0b0b", marker="o", ms=2.5, lw=1, label=L["cum"])
     axs[0].set_xlabel(L["ncomp"]); axs[0].set_ylabel(L["expl"]); axs[0].set_xticks(range(1, 11))
     axs[0].legend(frameon=False); axs[0].grid(axis="y"); axs[0].set_title("(a) Scree")
     scatter_emb(axs[1], P, "(b) PCA", L, f"{L['pc']}1 ({ev[0]:.1f}%)", f"{L['pc']}2 ({ev[1]:.1f}%)")
     scatter_emb(axs[2], um, "(c) UMAP", L, "UMAP 1", "UMAP 2")
-    axs[2].legend(frameon=False, fontsize=5.5, loc="best")
+    lo_, hi_ = axs[2].get_ylim(); axs[2].set_ylim(lo_, hi_ + .45 * (hi_ - lo_))  # açıklama veriyi örtmesin
+    axs[2].legend(frameon=False, fontsize=5.5, loc="upper center", ncols=2, columnspacing=.8, handletextpad=.2)
     save(fig, "golub_pca_umap", lang)
 
     # F4 t-SNE / UMAP
@@ -342,7 +346,7 @@ for lang, L in T.items():
     save(cg.fig, "golub_heatmap_top50", lang)
 
     # F7 batch: eğitim vs test
-    fig, axs = plt.subplots(1, 4, figsize=(FULL_W, 1.85), gridspec_kw=dict(wspace=.55))
+    fig, axs = plt.subplots(1, 4, figsize=(FULL_W, 1.75), gridspec_kw=dict(wspace=.55))
     for ax_, col, yl in ((axs[0], "log_median", L["median"]), (axs[1], "P_call_%", L["calls_p"])):
         for j, st in enumerate(("train", "test")):
             for k, c_ in enumerate(("ALL", "AML")):

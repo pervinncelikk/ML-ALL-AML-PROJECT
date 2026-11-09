@@ -117,16 +117,48 @@
  "de_fdr05": 37742,
  "de_fdr05_absLFC1": 0,
  "top10": [
-  "BAG4",
-  "MLLT11",
-  "FAM21C",
-  "LOXL3",
-  "C11orf74",
+  "LEF1-AS1",
+  "PNKD",
+  "LEF1",
+  "MGST1",
+  "LEF1",
+  "MGST1",
+  "MGST1",
+  "CFD",
+  "APLP2",
+  "FNDC3B"
+ ],
+ "heatmap_top30_genes": [
+  "LEF1-AS1",
+  "PNKD",
+  "LEF1",
+  "MGST1",
+  "CFD",
+  "APLP2",
+  "FNDC3B",
+  "CTSA",
+  "FUCA2",
+  "ZNF423",
+  "SLC23A1",
+  "RAG1",
+  "MSRB3",
+  "SNTB1",
+  "C10orf11",
+  "GALNT11",
+  "CD63",
+  "PLAGL1",
+  "FAM46A",
+  "LAMP2",
+  "CD302",
+  "CST3",
+  "KIT",
+  "CD79A",
+  "BLK",
+  "EBF1",
+  "HMHB1",
   "RAB32",
-  "SUPT3H",
-  "TMCO1",
-  "NEK3",
-  "RBMS3"
+  "DNTT",
+  "PRRG4"
  ],
  "golub_probes_mapped": 6428,
  "gse_probes_mapped": 45782,
@@ -204,5 +236,16 @@
  "comb_z_explained_%": [
   9.22,
   7.97
- ]
+ ],
+ "heatmap_2cluster_agree_%": 97.3,
+ "heatmap_2cluster_crosstab": {
+  "1": {
+   "ALL": 29,
+   "AML": 536
+  },
+  "2": {
+   "ALL": 721,
+   "AML": 6
+  }
+ }
 }

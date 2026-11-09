@@ -120,11 +120,15 @@ de = pd.DataFrame({"log2FC_AML_vs_ALL": lfc, "welch_t": t, "p": p,
 gpl570 = find("GPL570*")
 p2s570 = read_gpl_annotation(gpl570) if gpl570 else pd.Series(dtype=str)
 de["symbol"] = p2s570.reindex(de.index)
-de = de.sort_values("p")
+de = de.reindex(de.welch_t.abs().sort_values(ascending=False).index)  # |t| sırası (çok sayıda p=0 eşitliği nedeniyle p ile sıralanmaz)
 de.to_csv(TAB / "gse_de.csv")
 NUM["de_fdr05"] = int((de.fdr < .05).sum()); NUM["de_fdr05_absLFC1"] = int(((de.fdr < .05) & (de.log2FC_AML_vs_ALL.abs() > 1)).sum())
 NUM["top10"] = de.symbol.fillna(pd.Series(de.index, index=de.index)).head(10).tolist()
 top50 = de.index[:50]
+# ısı haritası: sembolü olan problardan her gen için en yüksek |t|'li prob, ilk 30 gen
+_u = de[de.symbol.notna()].drop_duplicates("symbol")
+top30 = _u.index[:30]
+NUM["heatmap_top30_genes"] = _u.symbol.iloc[:30].tolist()
 
 # ------------------------------------------------------------------ 5. Golub ile uyumlaştırma
 Xg, yg, sg, Cg, genes_g, _ = load_golub()
@@ -224,7 +228,7 @@ for lang, L in T.items():
     save(fig, "gse_distributions", lang)
 
     # F3 PCA + UMAP
-    fig, axs = plt.subplots(1, 3, figsize=(4.75, 1.95), gridspec_kw=dict(width_ratios=[.8, 1, 1], wspace=.45))
+    fig, axs = plt.subplots(1, 3, figsize=(4.75, 1.85), gridspec_kw=dict(width_ratios=[.8, 1, 1], wspace=.45))
     axs[0].bar(np.arange(1, 11), ev, color=C_ALL, width=.7)
     axs[0].plot(np.arange(1, 11), np.cumsum(ev), color="#0b0b0b", marker="o", ms=2.5, lw=1)
     axs[0].set_xlabel(L["ncomp"]); axs[0].set_ylabel(L["expl"]); axs[0].set_title("(a) Scree"); axs[0].grid(axis="y")
@@ -251,17 +255,24 @@ for lang, L in T.items():
     ax.set_ylabel(L["fdr"]); ax.legend(frameon=False, markerscale=3); ax.grid(True)
     save(fig, "gse_volcano", lang)
 
-    H = Xl[top50]; Hz = (H - H.mean()) / H.std()
-    rows = [str(de.symbol.get(p_) or p_)[:12] for p_ in top50]
+    H = Xl[top30]; Hz = (H - H.mean()) / H.std()
+    rows = [str(de.symbol[p_])[:12] for p_ in top30]
     cc = pd.DataFrame({L["class_"]: lab.map(pal).values, "T-ALL": np.where(is_T, C_3, "#f0efec")}, index=Hz.index)
     cg = sns.clustermap(Hz.T.set_axis(rows), method="average", metric="correlation", cmap="RdBu_r", vmin=-2.5, vmax=2.5,
-                        col_colors=cc, figsize=(FULL_W, 4.6), xticklabels=False, yticklabels=True,
-                        dendrogram_ratio=(.07, .08), cbar_kws=dict(label="z-score"), cbar_pos=(0.01, .83, .015, .1))
-    cg.ax_heatmap.tick_params(labelsize=5)
-    save(cg.fig, "gse_heatmap_top50", lang)
+                        col_colors=cc, figsize=(FULL_W, 2.25), xticklabels=False, yticklabels=True,
+                        dendrogram_ratio=(.06, .12), cbar_pos=(0.005, .80, .012, .14))
+    from scipy.cluster.hierarchy import fcluster
+    _k = fcluster(cg.dendrogram_col.linkage, 2, criterion="maxclust")
+    _ct = pd.crosstab(_k, lab.values)
+    NUM["heatmap_2cluster_agree_%"] = round(100 * _ct.max(axis=1).sum() / len(_k), 1)
+    NUM["heatmap_2cluster_crosstab"] = {str(i): r.to_dict() for i, r in _ct.iterrows()}
+    cg.ax_cbar.set_title("z", fontsize=6); cg.ax_cbar.tick_params(labelsize=5)
+    cg.ax_heatmap.tick_params(labelsize=4.6); cg.ax_col_colors.tick_params(labelsize=5.5)
+    cg.ax_heatmap.set_xlabel(f"{len(Hz)} " + ("samples" if lang == "en" else "örnek"), fontsize=6)
+    save(cg.fig, "gse_heatmap_top30", lang)
 
     # F5 iki veri seti karşılaştırması
-    fig, axs = plt.subplots(1, 4, figsize=(FULL_W, 1.95), gridspec_kw=dict(wspace=.5))
+    fig, axs = plt.subplots(1, 4, figsize=(FULL_W, 1.8), gridspec_kw=dict(wspace=.5))
     axs[0].scatter(Gg.mean(), Gs.mean(), s=2, c="#8a8985", lw=0, alpha=.6)
     axs[0].set_xlabel("Golub: " + ("mean log$_2$" if lang == "en" else "ort. log$_2$"))
     axs[0].set_ylabel("GSE13159: " + ("mean (0–1)" if lang == "en" else "ort. (0–1)"))
@@ -283,4 +294,5 @@ for lang, L in T.items():
     axs[3].set_title(f"(d) r={NUM['lfc_corr_pearson']:.2f}"); axs[3].grid(True)
     save(fig, "cross_dataset", lang)
 
+json.dump(NUM, open(TAB / "gse_numbers.json", "w"), indent=1, default=float)  # ısı haritası kümeleme sonucu dahil
 print(json.dumps({k: v for k, v in NUM.items() if k not in ("build", "top100_overlap_genes")}, indent=1, default=float))

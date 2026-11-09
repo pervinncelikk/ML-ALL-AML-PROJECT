@@ -2,6 +2,7 @@
  "n_samples": 72,
  "n_probes": 7129,
  "n_affx_control": 58,
+ "raw_below_clip_%": 47.0,
  "label_check": {
   "train_sorted": false,
   "test_sorted": false,
