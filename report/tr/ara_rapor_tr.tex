@@ -1,0 +1,221 @@
+% Ara Rapor (TR) — IEEE Conference Template (IEEEtran V1.8b, conference_101719.tex yapısı)
+% Derleme: pdflatex -> bibtex -> pdflatex x2.  Sayılar ../numbers.tex (src/make_macros.py) dosyasından gelir.
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+\babelprovide[import,main]{turkish}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs,tabularx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=*}
+\input{../numbers.tex}
+\newcommand{\PvideoURL}{\textcolor{red}{[video URL'si eklenecek]}}
+\newcommand{\PrepoURL}{\url{https://github.com/pervinncelikk/ML-ALL-AML-PROJECT}}
+\graphicspath{{../../results/figures/tr/}}
+\AtBeginDocument{\renewcommand{\tablename}{TABLO}\renewcommand{\abstractname}{Özet}}
+\renewcommand{\IEEEkeywordsname}{Anahtar Kelimeler}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{2pt}
+
+\begin{document}
+
+\title{Gen İfadesi Mikrodizi Verisiyle ALL/AML Lösemi Alt Tip Sınıflandırması: Literatür, Veri Setleri ve Keşifsel Veri Analizi\\
+{\large Makine Öğrenmesi Dersi Dönem Projesi --- Ara Rapor}}
+
+\author{\IEEEauthorblockN{Pervin Çelik \quad (Öğrenci No: 503020250010)}
+\IEEEauthorblockA{\textit{Bilgisayar Mühendisliği Anabilim Dalı (YL), Eskişehir Osmangazi Üniversitesi}\\
+Tanıtım videosu: \PvideoURL \quad Kod deposu: \PrepoURL}}
+
+\maketitle
+
+\begin{abstract}
+Bu ara rapor, akut lenfoblastik (ALL) ve akut miyeloid löseminin (AML) gen ifadesinden ayırt edilmesine yönelik projenin temelidir. Ana veri seti Golub ve ark. (72 örnek, 7.129 prob), benzer açık kaynak veri seti GEO GSE13159'dan (MILE) alınan ALL/AML alt kümesidir (\SnTR{} örnek). 27 kaynaklı literatür taraması, veri setlerinin tanımı ve keşifsel veri analizi (EDA) sunulmuştur. EDA; sütun sırasına göre etiketlemenin \GmisPosTR{} örneği yanlış etiketleyeceğini, Golub eğitim setinde sınıf ile merkezin tamamen çakıştığını, GSE13159 değerlerinin kantil normalizasyonla 0--1 aralığına getirildiğini ve sınıf etkilerinin platformlar arasında tutarlı olduğunu (\ScommonGTR{} ortak gende $r=\SlfcRTR$) göstermiştir.
+\end{abstract}
+
+\begin{IEEEkeywords}
+ALL/AML, gen ifadesi, mikrodizi, keşifsel veri analizi, batch etkisi, GSE13159
+\end{IEEEkeywords}
+
+%======================================================================
+\section{GİRİŞ: PROBLEM TANIMI VE MOTİVASYON}
+ALL lenfoid, AML miyeloid soydan köken alan iki akut lösemi alt tipidir; tedavi protokolleri farklı olduğundan doğru alt tip tanısı klinik açıdan belirleyicidir. Golub ve ark.~\cite{golub1999} gen ifadesinin bu ayrımı tek bir moleküler testle yapabileceğini göstermiş, MILE çalışması~\cite{haferlach2010} mikrodizi tabanlı alt tiplemenin çok merkezli klinik kullanılabilirliğini değerlendirmiştir. Ders modülü ALL'yi ``non-cancer'' olarak adlandırmaktadır; bu biyolojik olarak yanlıştır, çünkü ikisi de lösemidir. Bu nedenle problem \emph{ALL ve AML alt tip sınıflandırması} olarak tanımlanmış, ALL$=0$, AML$=1$ alınmıştır.
+
+\textbf{Mikrodizi.} Affymetrix dizilerinde her gen, 25-merlik problardan oluşan bir prob setiyle ölçülür; yoğunluk eşleşen (PM) ve tek baz farklı (MM) probların karşılaştırılmasıyla özetlenir. Golub verisindeki ``ortalama fark'' (PM$-$MM) değerleri bu nedenle negatif olabilir; her ölçüme bir varlık çağrısı (P/A/M) eşlik eder. 7.129 özniteliğe karşı 72 örnek ($p\gg n$) ve yaklaşık \%65/\%35 sınıf oranı, iyimser performans tahmini riskini artırır~\cite{simon2003,ambroise2002}.
+
+\textbf{Araştırma soruları.} \textbf{AS1:} Tüm ön işleme ve öznitelik seçimi dış katların içinde yapıldığında üç yöntem (elastik ağ lojistik regresyon, doğrusal SVM, rastgele orman) dengeli doğruluk ve ROC-AUC bakımından farklılaşır mı? (H$_0$: fark yok; Friedman ve Holm düzeltmeli Wilcoxon testleri.) \textbf{AS2:} Tek 38/34 bölmenin sonucu, 72 örnekteki iç içe çapraz doğrulama (CV) dağılımının \%95 güven aralığı içinde kalır mı? \textbf{AS3:} Golub'da öne çıkan genler ve modeller GSE13159'a ortak genler üzerinden aktarılabilir mi? (H$_0$: en iyi 100 gen örtüşmesi şans düzeyindedir; hipergeometrik test.)
+
+%======================================================================
+\section{LİTERATÜR TARAMASI}
+\textbf{Arama protokolü.} Arama Kasım 2026'da Google Scholar, PubMed/Europe PMC ve yayıncı sayfalarında yapılmış, her kaydın künyesi ve DOI'si Crossref API ile doğrulanmıştır. Sorgular: (S1) \texttt{(Golub OR ``acute leukemia'') AND (``gene expression'' OR microarray) AND (classification OR ``feature selection'')}; (S2) \texttt{(``selection bias'' OR ``nested cross-validation'') AND microarray}; (S3) \texttt{``batch effect'' AND microarray}; (S4) \texttt{GSE13159 OR ``MILE study''}; (S5) \texttt{TabPFN OR ``tabular deep learning''}. Tarih aralığı 1999--2026'dır; 2021--2026 ayrıca taranmıştır. \emph{Dahil etme:} hakemli yayın; insan lösemi gen ifadesi verisi ya da projede gereken bir yöntem (doğrulama, öznitelik seçimi, batch düzeltme); doğrulama protokolünü raporlama; doğrulanabilir DOI. \emph{Dışlama:} görüntü tabanlı lösemi çalışmaları, erişilemeyen ya da DOI'si doğrulanamayan kayıtlar, mükerrer yayınlar. 27 kaynak dahil edilmiştir: 26'sı hakemli, 11'i 2021--2026 yayınıdır; tek ön baskı~\cite{zhou2025} yalnız bağlam için kullanılmıştır.
+
+\textbf{Sentez.} Golub ve ark.~\cite{golub1999} 50 genle ağırlıklı oylama yapmış ve 38/34 bölmeyi standartlaştırmıştır; ardından SVM~\cite{furey2000}, SVM-RFE~\cite{guyon2002}, küçültülmüş merkezler~\cite{tibshirani2002}, elastik ağ~\cite{zou2005} ve rastgele orman~\cite{diaz2006} aynı veride sınanmış, Dudoit ve ark.~\cite{dudoit2002} basit yöntemlerin (DLDA, $k$-NN) rekabetçi olduğunu, Statnikov ve ark.~\cite{statnikov2008} SVM'in genellikle rastgele ormandan iyi olduğunu göstermiştir. Ambroise ve McLachlan~\cite{ambroise2002} gen seçimi CV dışında yapıldığında sıfır görünen hatanın yaklaşık \%5'e çıktığını, Simon ve ark.~\cite{simon2003} ve Varma ve Simon~\cite{varma2006} hiperparametre seçiminin de iç içe CV gerektirdiğini göstermiştir. Son dönemde metasezgisel gen seçimi ve derin öğrenmeyle \%99,9--100 doğruluk raporlanmakta~\cite{nagra2024,rupapara2022,alabdulqader2024,ilyas2023,rahaman2025}, derlemeler~\cite{alhenawi2022,alharbi2023} değerlendirme protokollerinin heterojenliğine dikkat çekmektedir. Çok merkezli transkriptom~\cite{warnat2020,warnat2021} ve batch etkisi~\cite{leek2010,johnson2007} çalışmaları merkez yanlılığının sınıf sinyaliyle karışabileceğini; tablo verisi çalışmaları ağaç modellerinin derin ağları hâlâ geçtiğini~\cite{grinsztajn2022} ve TabPFN'in~\cite{hollmann2025} 500 öznitelik sınırını~\cite{zhou2025} göstermektedir.
+
+\begin{table*}[!t]
+\caption{LİTERATÜR ÖZET TABLOSU (DEĞERLER KAYNAKTA RAPORLANDIĞI BİÇİMDEDİR)}
+\label{tab:lit}
+\centering\scriptsize\setlength{\tabcolsep}{2.5pt}\renewcommand{\arraystretch}{0.95}
+\begin{tabularx}{\textwidth}{@{}p{1.65cm}p{1.95cm}p{2.7cm}p{1.9cm}p{2.15cm}p{2.6cm}X@{}}
+\toprule
+\textbf{Yazar / Yıl} & \textbf{Veri seti} & \textbf{Ön işleme / öznitelik seçimi} & \textbf{Yöntem} & \textbf{Doğrulama} & \textbf{En iyi sonuç} & \textbf{Not}\\
+\midrule
+Golub 1999~\cite{golub1999} & Golub (38/34) & Ölçekleme; S/N ile 50 gen & Ağırlıklı oylama & LOOCV + test & Test: 29/34 kesin tahmin, tümü doğru & 38/34 bölmenin kaynağı\\
+Dudoit 2002~\cite{dudoit2002} & Golub (72) & 100--16.000 kırpma, filtre, log; 40 gen & DLDA, $k$-NN, CART & Tekrarlı 2:1 bölme & DLDA ve $k$-NN en iyi & Basit yöntemler yeterli\\
+Guyon 2002~\cite{guyon2002} & Golub, kolon & SVM-RFE & Doğrusal SVM & LOO + test & 2 genle LOO hatası 0 & Seçim CV dışında\\
+Ambroise 2002~\cite{ambroise2002} & Golub, kolon & SVM-RFE, ileri seçim & SVM, Fisher & Dış 10-kat CV, .632+ & Düzeltilmiş hata $\approx$\%5 & Seçim yanlılığı\\
+Tibshirani 2002~\cite{tibshirani2002} & Golub, SRBCT & Gömülü küçültme & NSC & 10-kat CV + test & 21 gen; test 2/34 hata & Yorumlanabilir\\
+Zou 2005~\cite{zou2005} & Golub (38/34) & Elastik ağ & Lojistik EN & 10-kat CV + test & 45 gen; test 0/34 hata & Grup etkisi\\
+Díaz-U. 2006~\cite{diaz2006} & 9 veri (Golub dahil) & RF ile geri eleme & RF, SVM, $k$-NN, DLDA & .632+ bootstrap & Golub hata: SVM 0,014; RF 0,051 & Dış döngü\\
+Rupapara 2022~\cite{rupapara2022} & GSE28497 & ADASYN + Chi2 & LR+SVC+ETC & $k$-kat CV & \%100 doğruluk & Yeniden örnekleme konumu belirsiz\\
+Nagra 2024~\cite{nagra2024} & Golub dahil 8 veri & Geliştirilmiş PSO (SIW-APSO) & ELM, KCNN, SVM & 5-kat CV & Golub: \%100 doğruluk & Metasezgisel\\
+Warnat-H. 2021~\cite{warnat2021} & $>$16.400 kan transkriptomu & Çalışmalar arası normalizasyon & Swarm Learning & Merkez bazlı test & Dağıtık model yereli geçer & Merkez yanlılığı\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\textbf{Golub sonuçlarının karşılaştırması ve boşluk.} Tablo~\ref{tab:lit}'e göre Golub verisinde test hatası 0--2/34, bootstrap hatası \%1--5 düzeyindedir ve yeni çalışmalar \%100'e ulaşmaktadır. Ancak bu sonuçların çoğu tek bir 38/34 bölmeye dayanır (34 örnekte bir hata yaklaşık 3 puandır), gen seçimi ve yeniden örneklemenin doğrulama döngüsüne göre konumunu her zaman raporlamaz~\cite{ambroise2002} ve dengesiz sınıflara rağmen çoğunlukla yalnız doğruluk verir. Setlerin farklı merkez ve dokulardan gelmesinin yarattığı karışıklık ile bulguların modern bir platformdaki bağımsız kohortta geçerliliği ise nadiren birlikte sınanmıştır. Bu proje aynı sızıntısız protokolü iki veri setine uygulayarak ve batch karışıklığını ölçerek bu boşluğu hedefler.
+
+%======================================================================
+\section{VERİ SETLERİ}\label{sec:data}
+\textbf{Golub ve ark. (ana veri seti).} Kaynak: Golub ve ark.~\cite{golub1999} (DOI: 10.1126/science.286.5439.531); ders modülü ve Kaggle \texttt{crawford/gene-expression}. Lisans: Kaggle sayfasında CC0 (kamu malı); kaynak olarak Golub ve ark. gösterilmiştir. GEO öncesi bir veri olduğundan erişim numarası yoktur (platform: GPL80). Tanıda alınmış kemik iliği (BM) ve periferik kan (PB) örnekleri; 47 ALL (\GallBTR{} B-hücre, \GallTTR{} T-hücre) ve 25 AML; DFCI, CALGB, St.~Jude ve CCG merkezleri (meta veri: CRAN \texttt{hddplot}). Affymetrix Hu6800, 7.129 prob (58'i AFFX kontrol probu), çip bazında ölçeklenmiş ortalama fark değerleri.
+
+\textbf{GSE13159 (benzer açık kaynak veri seti).} Kaynak: Haferlach ve ark.~\cite{haferlach2010} (DOI: 10.1200/JCO.2009.23.4732), GEO \textbf{GSE13159} (ArrayExpress: E-GEOD-13159). NCBI, GEO verilerinin kullanımına kısıt koymaz; kaynak gösterilmesi gerekir. MILE çalışmasının retrospektif aşamasındaki \StotalTR{} örnekten (akut/kronik lösemi, MDS, kontrol) tüm ALL (8 alt tip) ve AML (6 alt tip) örnekleri alınmıştır. Affymetrix HG-U133 Plus 2.0 (GPL570), \SpTR{} prob; GEO kaydına göre değerler, Liu ve ark.'nın özetleme ve kantil normalizasyon yöntemiyle işlenmiş prob seti sinyalleridir ve 0--1 aralığındadır.
+
+\textbf{Seçim gerekçesi ve uyumluluk.} GSE13159 aynı klinik soruyu içerir, GEO erişim numaralı ve çok merkezlidir, Golub'dan yaklaşık 18 kat büyüktür. Alt tiplerin tamamının alınması, B- ve T-ALL'ı birlikte içeren Golub ALL tanımıyla örtüşür. Farklı çip kuşaklarındaki problar GEO anotasyonlarıyla (GPL80, GPL570) gen sembollerine eşlenmiş, çok problu genlerde ortalama ifadesi en yüksek prob seçilmiştir: Golub'da \SgolubGTR{}, GSE13159'da \SgseGTR{} gen ve \textbf{\ScommonGTR{} ortak gen} elde edilmiştir (Tablo~\ref{tab:data}).
+
+\begin{table}[!t]
+\caption{VERİ SETLERİNİN YAN YANA ÖZETİ}\label{tab:data}
+\centering\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & \textbf{Golub ve ark.~\cite{golub1999}} & \textbf{GSE13159 (MILE)~\cite{haferlach2010}}\\
+\midrule
+Kaynak & Kaggle / Broad; DOI & GEO GSE13159; DOI\\
+Platform & Hu6800 (GPL80) & HG-U133 Plus 2.0 (GPL570)\\
+$n$ / $p$ (prob) & 72 / 7.129 & \SnTR{} (\StotalTR{} içinden) / \SpTR{}\\
+Gen / ortak gen & \SgolubGTR{} / \ScommonGTR{} & \SgseGTR{} / \ScommonGTR{}\\
+ALL / AML & 47 / 25 (\%65 / \%35) & \SnALLTR{} / \SnAMLTR{} (\%\SallPctTR{} / \%\SamlPctTR{})\\
+Alt tip & B-ALL, T-ALL; AML & 14 MILE alt tipi\\
+Doku (BM / PB) & 62 / 10 & \SbmNTR{} / \SpbNTR{}\\
+Bölünme & 38 eğitim / 34 test & Yok (yalnız CV)\\
+Ölçek & Ortalama fark (negatif olabilir) & Kantil normalize, 0--1\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{KEŞİFSEL VERİ ANALİZİ VE VERİ ANALİTİĞİ}\label{sec:eda}
+Analizler Python (pandas, SciPy, scikit-learn~\cite{pedregosa2011}, statsmodels, seaborn, umap-learn) ile sabit tohumla (\texttt{SEED=42}) yapılmış, rapordaki her sayı betik çıktılarından otomatik üretilmiştir. Golub'da gen sıralaması yalnız eğitim setinde yapılmıştır.
+
+\subsection{Golub: Veri Kalitesi}
+\textbf{Eksik/INF:} Ham veride NaN veya INF yoktur; INF ancak bir dönüşümle oluşur. Örneğin kırpmadan log alınırsa \GlogNegInfTR{} değer $-\infty$, \GlogNaNTR{} değer NaN olur (tüm değerlerin \%\GlogBadTR{} kadarı). Bu nedenle INF'i sonradan doldurmak yerine log öncesi alt-üst eşik uygulanmıştır.
+\textbf{Negatif ve uç değerler:} Sıfır/negatif değer oranı eğitimde \%\GnegTrTR{}, testte \%\GnegTeTR{} düzeyindedir (aralık $[\GminTrTR;\ \GmaxTrTR]$); negatiflerin \%\GnegATR{} kadarı ``A'' çağrısı almış ölçüm gürültüsüdür. Kırpma ve log sonrası, derste işlenen IQR kuralıyla (gen bazında $Q_1-1{,}5\,\mathrm{IQR}$ ve $Q_3+1{,}5\,\mathrm{IQR}$ dışı) değerlerin \%\GiqrOutTR{} kadarı uç değerdir; en çok uç değer \GiqrPatTR{} numaralı hastadadır (\%\GiqrPatPctTR{}); örnek dışlamak gerekmez.
+\textbf{Call (P/A/M):} Sinyalin arka plandan ayırt edilebilirliğine dair varlık çağrısıdır; dağılım P: \%\GPpctTR{}, A: \%\GApctTR{}, M: \%\GMpctTR{} şeklindedir ve \GneverPTR{} prob hiçbir örnekte P almamıştır. Çağrılar öznitelik olarak kullanılmayacaktır.
+\textbf{Etiket--sütun eşleştirmesi:} Hasta sütunları sıralı değildir (eğitim: 1--27, 34--38, 28--33). \texttt{actual.csv} sütun sırasına göre atansaydı \textbf{\GmisPosTR{} örnek yanlış etiketlenirdi}; etiketler hasta numarasıyla eşlenmiş ve sınıf sayıları (27/11, 20/14) kodda doğrulanmıştır.
+
+\subsection{Golub: Betimsel İstatistikler ve Dağılımlar}
+Sınıf oranı eğitimde \%71/\%29, testte \%59/\%41'dir. Ham değerler sağa çarpıktır (medyan çarpıklık \GskewRawTR{}); 100--16.000 kırpma ve log$_2$ sonrası çarpıklık \GskewLogTR{} değerine iner ve örnek dağılımları karşılaştırılabilir hale gelir (Şekil~\ref{fig:dist}). Dudoit filtresi (max/min$>$5, max$-$min$>$500)~\cite{dudoit2002} literatürdeki \textbf{\GfiltAllTR{}} (72 örnek) ve \textbf{\GfiltTrTR{}} (eğitim) gen sayılarını birebir üretmiştir; bu, ön işleme kodunun doğruluğunu teyit eder.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{golub_distributions.pdf}
+\caption{Golub örnek dağılımları: (a) ham ortalama fark değerleri, (b) kırpma ve log$_2$ sonrası (\GfiltAllTR{} prob). Kesikli çizgi eğitim/test sınırıdır.}
+\label{fig:dist}
+\end{figure*}
+
+\subsection{Golub: Boyut İndirgeme ve Ayırt Edici Genler}
+PCA'da ilk iki bileşenin açıkladığı varyans sırasıyla \%\GpcATR{} ve \%\GpcBTR{} kadardır; \%80 varyans için \GpcEightyTR{} bileşen gerekir (Şekil~\ref{fig:pca}). \textbf{PC1 sınıfla değil} (Mann--Whitney $p=\GpcAclassTR$), \textbf{eğitim/test ayrımıyla ilişkilidir} ($p=\GpcAsetTR$); sınıf ayrımı PC2'dedir ($p=\GpcBclassTR$). UMAP ALL ve AML'yi büyük ölçüde ayrı kümelerde gösterir. Eğitim setinde Welch $t$ ve Mann--Whitney testleri (Benjamini--Hochberg) ile FDR$<$0,05 düzeyinde \GdeFiveTR{} gen anlamlıdır (AML'de yüksek: \GdeUpAMLTR{}, ALL'de yüksek: \GdeUpALLTR{}). En anlamlı genler (Zyxin, FAH, LEPR, LTC4S, TCF3, HOXA9, CST3) Golub ve ark.'nın bilgi verici genleriyle örtüşür. En iyi 50 genin ısı haritası ve hiyerarşik kümelemesi (Şekil~\ref{fig:heat}) örnekleri iki ana kümeye ayırır; yalnızca \GmisNTR{} ALL örneği (\GmisClust; 67 numara PB kaynaklı tek T-ALL test örneği) AML kümesine düşer. Bu 50 genin testte aynı yönde değişme oranı \%\GsignAgreeTR{}, testte de $p<0{,}05$ olanların sayısı \GtopTestTR{} olarak bulunmuştur.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{golub_pca_umap.pdf}
+\caption{Golub: (a) PCA açıklanan varyans, (b) PC1--PC2, (c) UMAP (renk: sınıf, işaret: set).}
+\label{fig:pca}
+\end{figure*}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.84\textwidth]{golub_heatmap_top50.pdf}
+\caption{Eğitimde seçilen en iyi 50 genin 72 örnekte z-skor ısı haritası ve hiyerarşik kümelemesi (korelasyon uzaklığı). Şeritler: sınıf; set (koyu: eğitim).}
+\label{fig:heat}
+\end{figure*}
+
+\subsection{Golub: Eğitim ve Bağımsız Test Setlerinin Karşılaştırılması}\label{sec:batch}
+Meta veriye göre \textbf{eğitimdeki 27 ALL'ın tamamı DFCI'dan, 11 AML'nin tamamı CALGB'den gelir ve hepsi kemik iliğidir}; eğitimde sınıf ile merkez tamamen karışıktır, yani bir model sınıf yerine merkez imzasını öğrenebilir. Test seti \GtePBTR{} PB örneği ile St.~Jude ve CCG örnekleri içerir. Örnek başına medyan log$_2$ ifade setler arasında farklıdır ($p=\GmedSetPTR$; Şekil~\ref{fig:batch}a); 58 AFFX kontrol probundan \GaffxTR{} tanesi setler arasında $p<0{,}05$ ile değişir. Sınıf içi Kolmogorov--Smirnov testlerinde ALL'da \GksALLTR{} gen FDR$<$0,05 düzeyinde set farkı gösterirken AML'de hiç gen göstermez. Buna karşın sınıf sinyali korunur: eğitim ve test log$_2$ kat değişimlerinin korelasyonu $r=\GlfcRTR$ düzeyindedir (Şekil~\ref{fig:batch}d). Tek 38/34 bölmenin sonucu bu nedenle merkez ve doku kaymasını da içerecektir.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{golub_batch.pdf}
+\caption{Golub eğitim/test: (a) örnek medyanı, (b) P çağrısı oranı, (c) merkezlere göre PC1, (d) eğitim ve test log$_2$ kat değişimleri (turuncu: en iyi 50 gen).}
+\label{fig:batch}
+\end{figure*}
+
+\subsection{GSE13159: Veri Kalitesi, Dağılımlar ve Boyut İndirgeme}
+\textbf{Kalite:} \SaffxDropTR{} AFFX kontrol probunun değerleri GEO kaydında tamamen boştur ve çıkarılmıştır; başka eksik değer yoktur. Değerler 0--1 aralığındadır ve her örneğin sıralı değerleri neredeyse aynıdır (en büyük fark \SsortDiffTR{}); bu, kantil normalizasyonun sonucudur. Değerler Beta(1,2;\,3) kantilleriyle örtüşür (medyan \SbetaMedTR{}); yani hedef olarak kuramsal bir 0--1 dağılımı kullanılmıştır. Bu nedenle örnek bazında medyan/IQR karşılaştırması bilgi taşımaz ve Golub'daki kırpma/log dönüşümü uygulanmaz. Örnekler arası ortalama korelasyona IQR kuralı uygulandığında \SoutCorTR{} örnek alt sınırın altında kalmıştır (Şekil~\ref{fig:gse}d); bunlar işaretlenmiş, EDA'da çıkarılmamıştır.
+\textbf{Sınıf ve doku:} ALL \%\SallPctTR{}, AML \%\SamlPctTR{} oranındadır. PB örnekleri sınıflara dengeli dağılmıştır (ALL: \SpbALLTR{}, AML: \SpbAMLTR{}); dolayısıyla doku Golub'daki gibi sınıfla karışmaz. Yine de en değişken 5.000 probun ALL içinde \StisALLTR{}, AML içinde \StisAMLTR{} tanesi BM ile PB arasında farklıdır (FDR$<$0,05).
+\textbf{Boyut indirgeme:} PC1 varyansın \%\SpcATR{} kadarını açıklar ve doğrudan sınıfı taşır ($p<10^{-300}$); UMAP B-ALL, T-ALL ve AML'yi ayrı kümelerde gösterir (Şekil~\ref{fig:gse}). Büyük örneklemde \SdeFiveTR{} prob FDR$<$0,05 düzeyinde anlamlıdır; bu ölçekte $p$-değerinden çok etki büyüklüğü belirleyicidir. $|t|$ sırasıyla seçilen en iyi 30 genin ısı haritasında (depoda \texttt{gse\_heatmap\_top30}) lenfoid (CD79A, EBF1, DNTT, RAG1) ve miyeloid (KIT, CST3, CFD, MGST1) genler sınıfları ayırır; hiyerarşik kümeleme örneklerin \%\SheatAgreeTR{}'ünü kendi sınıfıyla gruplar.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.665\textwidth]{gse_pca_umap.pdf}\hfill
+\includegraphics[width=0.325\textwidth]{gse_qc_corr.pdf}
+\caption{GSE13159: (a) açıklanan varyans, (b) PCA, (c) UMAP (en değişken 5.000 prob), (d) korelasyon tabanlı kalite kontrolü (kesikli: IQR alt sınırı).}
+\label{fig:gse}
+\end{figure*}
+
+\subsection{İki Veri Seti Arasındaki Dağılım Farkları}\label{sec:cross}
+Ortak genlerde iki veri setinin ölçekleri tamamen farklıdır (Golub log$_2$ medyanı \SmedGTR{}, GSE13159 medyanı \SmedSTR{}); ham değerlerle yapılan ortak PCA'da PC1 varyansın \%\SrawPConeTR{}'unu açıklar ve yalnızca veri setini ayırır (Şekil~\ref{fig:cross}b). Her veri seti kendi içinde standartlaştırıldığında veri seti ayrımı kaybolur, sınıf yapısı ortaklaşır (Şekil~\ref{fig:cross}c). Gen ortalamalarının sıralaması iki platformda orta düzeyde uyumludur ($\rho=\SmeanRhoTR$). Sınıf etkileri tutarlıdır: AML/ALL farklarının korelasyonu $r=\SlfcRTR$ düzeyindedir ve iki veri setinin en iyi 100 geninden \SovHundTR{} tanesi ortaktır (şans beklentisi \SovHundExpTR{}, hipergeometrik $p=\SovHundPTR$). Ortak genler lenfoid (CD19, CD22, CD79A, DNTT, VPREB1) ve miyeloid (CD33, CST3, ZYX, LYN) belirteçleri içerir.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{cross_dataset.pdf}
+\caption{Golub ve GSE13159 (\ScommonGTR{} ortak gen): (a) gen ortalamaları, (b) ham ölçeklerle ve (c) veri seti içi z-skorla ortak PCA, (d) AML/ALL farkları (turuncu: ortak en iyi genler).}
+\label{fig:cross}
+\end{figure*}
+
+\subsection{Bulguların Numaralı Özeti ve Modelleme İçin Çıkarımlar}
+\begin{enumerate}[label=\textbf{B\arabic*.}]
+\item Etiketler hasta numarasıyla eşlenmeli; sütun sırasıyla eşleme \GmisPosTR{} örneği yanlış etiketler.
+\item INF bir ön işleme ürünüdür; doldurmak yerine katlar içinde kırpma + log$_2$ uygulanmalıdır.
+\item Değerlerin yaklaşık yarısı (\%\GbelowClipTR{}) 100'ün altındadır, sınıf sinyali ise az sayıda gende yoğundur; ifade filtresi ve gen sayısı ($k$) seçimi eğitim katlarında yapılmalıdır.
+\item Golub eğitiminde sınıf ile merkez çakışır; tek 38/34 sonucu iç içe CV ile birlikte yorumlanmalıdır.
+\item Sınıflar dengesizdir; tabakalı bölme, \texttt{class\_weight} ve dengeli doğruluk gereklidir.
+\item İki platformun ölçekleri farklıdır; aktarım ancak ortak genlerde veri seti içi standardizasyonla anlamlıdır.
+\item GSE13159'da doku tipi ve korelasyon aykırıları duyarlılık analizinde dikkate alınmalıdır.
+\end{enumerate}
+
+%======================================================================
+\section{FİNALE KADAR PLAN}
+\textbf{Yöntemler ve gerekçe:} (1) \emph{LASSO/elastik ağ düzenlileştirmeli lojistik regresyon}: gömülü gen seçimi, ilişkili genleri birlikte tutma ve yorumlanabilir katsayılar~\cite{zou2005}; (2) \emph{doğrusal SVM}: mikrodizi verisinde tutarlı başarı~\cite{furey2000,statnikov2008}, katlar içinde filtreyle; (3) \emph{rastgele orman}: doğrusal olmayan etkileşimler, ölçeklemeye duyarsızlık ve özellik önemi~\cite{diaz2006}. \textbf{Hedeflenen bonuslar:} B1 (dropout'lu MLP), B2 (katlar içinde $\le$500 genle TabPFN~\cite{hollmann2025}). \textbf{Takvim (hafta):} 1--2 pipeline ve 38/34; 3--4 iç içe CV ve istatistiksel karşılaştırma; 5 GSE13159 ve aktarım; 6 bonuslar; 7--8 yorumlanabilirlik, rapor, video. \textbf{Riskler (önlem):} küçük $n$ (tekrarlı CV, güven aralığı), merkez/doku karışıklığı (duyarlılık analizi), platform farkı (veri seti içi standardizasyon), aşırı öğrenme (erken durdurma).
+
+%======================================================================
+\section{GENAI KULLANIM BEYANI VE ÖZGÜNLÜK}
+\begin{table}[!h]
+\centering\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabularx}{\columnwidth}{@{}p{1.5cm}p{1.9cm}X X@{}}
+\toprule
+\textbf{Araç / sürüm} & \textbf{Amaç; bölüm/dosya} & \textbf{Öğrencinin değişikliği} & \textbf{Doğrulama}\\
+\midrule
+Claude Opus 5.5 (Anthropic), 08.11.2026 & Literatür sorguları, DOI kontrolü; Bölüm II & Kapsamı yönerge isterleriyle sınırladı; 6 sayfa için tabloyu kısalttırdı & DOI'ler Crossref kayıtlarıyla eşlendi\\
+Claude Opus 5.5 & EDA kodu; \texttt{src/*.py} & GSE13159'u seçti, GEO verisini kendisi indirdi; alt tip, doku ve 0--1 ölçek kararlarını verdi & Kod yeniden çalıştırıldı; 3571/3051 gen sayıları literatürle tuttu\\
+Claude Opus 5.5 & Rapor metni, LaTeX & İstenmeyen içeriği çıkarttı; Kaggle lisansını (CC0) kontrol etti & Sayılar \texttt{results/} çıktılarından otomatik basıldı\\
+\bottomrule
+\end{tabularx}
+\end{table}
+İstem özetleri ve ayrıntılı beyan: depoda \texttt{docs/GenAI\_kullanim\_beyani.md}. Tüm kod ve yorumlar öğrenci tarafından gözden geçirilmiştir.
+
+\section*{TEŞEKKÜR}
+Claude Opus 5.5 (Anthropic) yardımcı araç olarak kullanılmıştır (Bölüm VI); sorumluluk yazara aittir.
+
+\bibliographystyle{IEEEtran}
+{\footnotesize\bibliography{../references_doi}}
+
+\end{document}
