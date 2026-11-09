@@ -86,8 +86,17 @@ def binary_label(cls: str):
     return None
 
 
+ANNOT = Path(__file__).resolve().parents[1] / "data" / "annotation"
+
+
 def read_gpl_annotation(path: Path) -> pd.DataFrame:
-    """GPL anotasyonu: .annot.gz veya 'full table' – 'ID' başlık satırından itibaren oku."""
+    """GPL anotasyonu: .annot.gz veya 'full table' – 'ID' başlık satırından itibaren oku.
+    Depoda sabitlenmiş eşleme (data/annotation/<gpl>_probe2symbol.csv) varsa o kullanılır; böylece GEO'nun
+    anotasyon dosyalarını güncellemesi sonuçları değiştirmez (bkz. data/annotation/README.md)."""
+    m = re.match(r"(GPL\d+)", Path(path).name, re.I)
+    frozen = ANNOT / f"{m.group(1).lower()}_probe2symbol.csv" if m else None
+    if frozen is not None and frozen.exists():
+        return pd.read_csv(frozen, dtype=str, index_col="ID")["symbol"]
     with _open(path) as f:
         lines = f.readlines()
     start = next(i for i, l in enumerate(lines) if re.match(r'^"?ID"?\t', l))
