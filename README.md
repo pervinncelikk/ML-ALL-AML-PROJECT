@@ -33,6 +33,8 @@ python src/build_bib.py              # DOI'li kaynakça
 - Rapordaki **her sayı** `results/tables/*_numbers.json` → `report/numbers.tex` makrolarıyla basılır; elle sayı yazılmaz.
 - Etiketler sütun sırasına göre değil, **hasta numarasına göre** eşlenir ve `assert` ile doğrulanır (`src/data_golub.py`).
 - Doğrulama kontrolü: Dudoit ve ark. (2002) filtresi literatürdeki 3571 (72 örnek) ve 3051 (38 eğitim) gen sayılarını üretir.
+- Prob→gen eşlemesi `data/annotation/` altında sabitlenmiştir; GEO anotasyon dosyalarının sürüm farkı sonuçları etkilemez.
+- Bağımsız ortam doğrulaması: `notebooks/` altındaki iki defter Google Colab'da çalıştırılmış, ürettikleri değerler rapordaki sayılarla otomatik karşılaştırılmıştır (Golub 149/149, GSE13159 134/134 eşleşme).
 
 ## Depo yapısı
 ```
@@ -42,8 +44,12 @@ src/data_golub.py          Golub yükleme, etiket eşleme, kırpma/log, varyans 
 src/data_gse13159.py       GSE13159 series matrix okuma, ALL/AML alt kümesi, prob->gen eşleme
 src/eda_golub.py           Golub EDA (kalite, dağılımlar, PCA/t-SNE/UMAP, DE genler, ısı haritası, batch)
 src/eda_gse13159.py        GSE13159 EDA ve platformlar arası karşılaştırma
+src/plot_gse_qc.py         GSE13159 korelasyon tabanlı kalite kontrol şekli
 src/make_macros.py         JSON -> LaTeX sayı makroları
-report/tr                  IEEE konferans şablonunda ara rapor (TR)
+src/build_bib.py           DOI'li kaynakça
+data/annotation            sabitlenmiş prob->gen eşlemeleri (GPL80, GPL570)
+notebooks                  Colab tekrarlanabilirlik defterleri (Golub; GSE13159 ve karşılaştırma)
+report/tr                  IEEE konferans şablonunda ara rapor (TR): .tex kaynağı ve PDF
 results/figures, tables    tüm şekiller (PDF vektör + 300 dpi PNG) ve tablolar
 ```
 
@@ -55,4 +61,4 @@ results/figures, tables    tüm şekiller (PDF vektör + 300 dpi PNG) ve tablola
 | GSE13159 (MILE Stage 1) | GEO GSE13159; Haferlach et al., *J Clin Oncol* 2010, doi:10.1200/JCO.2009.23.4732 | HG-U133 Plus 2.0 (GPL570) |
 
 ## GenAI beyanı
-Kod ve metin taslaklarında Anthropic Claude (Claude Opus 5.5) yardımcı araç olarak kullanılmıştır; ayrıntılı beyan raporun Ek A'sındadır.
+Anthropic Claude Opus 5.5 yardımcı araç olarak kullanılmıştır. Özet tablo raporun VI. bölümünde, ayrıntılı beyan [`docs/GenAI_kullanim_beyani.md`](docs/GenAI_kullanim_beyani.md) dosyasındadır.
