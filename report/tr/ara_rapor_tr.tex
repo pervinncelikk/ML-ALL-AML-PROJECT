@@ -17,11 +17,13 @@
 \usepackage{enumitem}
 \setlist{nosep,leftmargin=*}
 \input{../numbers.tex}
-\newcommand{\PvideoURL}{\textcolor{red}{[video URL'si eklenecek]}}
+\newcommand{\PvideoURL}{\url{https://drive.google.com/file/d/11Pfx1a9HtEmbLNI-eDoWHuMRzq_28QuK/view?usp=sharing}}
 \newcommand{\PrepoURL}{\url{https://github.com/pervinncelikk/ML-ALL-AML-PROJECT}}
 \graphicspath{{../../results/figures/tr/}}
 \AtBeginDocument{\renewcommand{\tablename}{TABLO}\renewcommand{\abstractname}{Özet}}
 \renewcommand{\IEEEkeywordsname}{Anahtar Kelimeler}
+\usepackage{etoolbox}
+\makeatletter\patchcmd{\abstract}{\textit{\abstractname}---}{\textit{\abstractname}:\ }{}{}\patchcmd{\IEEEkeywords}{\textit{\IEEEkeywordsname}---}{\textit{\IEEEkeywordsname}:\ }{}{}\makeatother
 \setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
 \setlength{\dbltextfloatsep}{6pt plus 2pt minus 2pt}
 \setlength{\abovecaptionskip}{2pt}
@@ -29,11 +31,12 @@
 \begin{document}
 
 \title{Gen İfadesi Mikrodizi Verisiyle ALL/AML Lösemi Alt Tip Sınıflandırması: Literatür, Veri Setleri ve Keşifsel Veri Analizi\\
-{\large Makine Öğrenmesi Dersi Dönem Projesi --- Ara Rapor}}
+{\large Makine Öğrenmesi ve Anomali Tespiti Dersi, Dönem Projesi Ara Raporu}}
 
 \author{\IEEEauthorblockN{Pervin Çelik \quad (Öğrenci No: 503020250010)}
 \IEEEauthorblockA{\textit{Bilgisayar Mühendisliği Anabilim Dalı (YL), Eskişehir Osmangazi Üniversitesi}\\
-Tanıtım videosu: \PvideoURL \quad Kod deposu: \PrepoURL}}
+Kod deposu: \PrepoURL\\
+Tanıtım videosu: \PvideoURL}}
 
 \maketitle
 
@@ -202,15 +205,16 @@ Ortak genlerde iki veri setinin ölçekleri tamamen farklıdır (Golub log$_2$ m
 \centering\scriptsize\setlength{\tabcolsep}{2pt}
 \begin{tabularx}{\columnwidth}{@{}p{1.5cm}p{1.9cm}X X@{}}
 \toprule
-\textbf{Araç / sürüm} & \textbf{Amaç; bölüm/dosya} & \textbf{Öğrencinin değişikliği} & \textbf{Doğrulama}\\
+\textbf{Araç / sürüm} & \textbf{Amaç; bölüm/dosya} & \textbf{Öğrencinin katkısı} & \textbf{Doğrulama}\\
 \midrule
-Claude Opus 5.5 (Anthropic), 08.11.2026 & Literatür sorguları, DOI kontrolü; Bölüm II & Kapsamı yönerge isterleriyle sınırladı; 6 sayfa için tabloyu kısalttırdı & DOI'ler Crossref kayıtlarıyla eşlendi\\
-Claude Opus 5.5 & EDA kodu; \texttt{src/*.py} & GSE13159'u seçti, GEO verisini kendisi indirdi; alt tip, doku ve 0--1 ölçek kararlarını verdi & Kod yeniden çalıştırıldı; 3571/3051 gen sayıları literatürle tuttu\\
-Claude Opus 5.5 & Rapor metni, LaTeX & İstenmeyen içeriği çıkarttı; Kaggle lisansını (CC0) kontrol etti & Sayılar \texttt{results/} çıktılarından otomatik basıldı\\
+Claude Opus 5.5 (Anthropic), Kasım 2026 & Literatür taraması ve kaynak doğrulama; Bölüm II & 5 sorguyu (1999--2026) Google Scholar'da yürüttü; kaynak ölçütlerini belirledi & DOI'ler Crossref kayıtlarıyla eşlendi; Tablo I birincil kaynaklarla karşılaştırıldı\\
+Claude Opus 5.5 & EDA kodu; Bölüm III--IV, \texttt{src/*.py} & GSE13159'u seçip temin etti; örneklem kapsamını ve 0--1 ölçeğin işlenmesini belirledi & Dudoit filtresi 3.571/3.051 gen sayısını yeniden üretti\\
+Claude Opus 5.5 & Rapor metni ve LaTeX dizgisi & Bölüm bölüm inceledi; hatalı ve eksik içeriği düzeltti & Sayılar kod çıktılarından otomatik aktarıldı\\
+Claude Opus 5.5 & Tekrarlanabilirlik; \texttt{notebooks/*.ipynb} & Analizleri Colab'da yeniden çalıştırdı; anotasyon farkını bulup eşlemeyi sabitledi & Golub 149, GSE13159 134 rapor sayısı birebir eşleşti\\
 \bottomrule
 \end{tabularx}
 \end{table}
-İstem özetleri ve ayrıntılı beyan: depoda \texttt{docs/GenAI\_kullanim\_beyani.md}. Tüm kod ve yorumlar öğrenci tarafından gözden geçirilmiştir.
+Ayrıntılı beyan ve istem özetleri: \texttt{docs/GenAI\_kullanim\_beyani.md}.
 
 \section*{TEŞEKKÜR}
 Claude Opus 5.5 (Anthropic) yardımcı araç olarak kullanılmıştır (Bölüm VI); sorumluluk yazara aittir.

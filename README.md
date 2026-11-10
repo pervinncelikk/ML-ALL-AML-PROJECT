@@ -1,6 +1,10 @@
-# ALL/AML Lösemi Alt Tip Sınıflandırması — Makine Öğrenmesi Dönem Projesi
+# ALL/AML Lösemi Alt Tip Sınıflandırması
+
+**Ders:** Makine Öğrenmesi ve Anomali Tespiti, Dönem Projesi
 
 **Öğrenci:** Pervin Çelik (503020250010) · **Aşama:** Ara Rapor (EDA, veri setleri, literatür)
+
+**Tanıtım videosu (ara rapor):** https://drive.google.com/file/d/11Pfx1a9HtEmbLNI-eDoWHuMRzq_28QuK/view?usp=sharing
 
 Gen ifadesi (mikrodizi) verisinden **ALL vs. AML alt tip sınıflandırması** için uçtan uca, tekrarlanabilir
 ve sızıntısız bir ML çalışması. Ana veri: Golub ve ark. (1999); benzer açık veri: GEO **GSE13159** (MILE).
